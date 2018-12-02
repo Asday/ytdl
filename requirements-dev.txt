@@ -1,7 +1,10 @@
+attrs
 detox
 flake8
+freezegun
 pytest
 pytest-django
+pytest-mock
 pytest-pythonpath
 tox
 watchdog

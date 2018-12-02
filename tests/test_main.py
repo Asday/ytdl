@@ -1,5 +1,2 @@
-import ytdl  # noqa
-
-
-def test_nothing():
-    assert 1 == 1
+def test_server_starts(client):
+    client.get('/')

@@ -1,6 +1,8 @@
 detox
 flake8
 pytest
+pytest-django
+pytest-pythonpath
 tox
 watchdog
 -r requirements.txt

@@ -9,9 +9,11 @@ setup(
     name='ytdl',
     version='0.0.0',
     license='MIT',
-    description='Watch youtube playlists for changes, and download the videos.',
+    description=(
+        'Watch youtube playlists for changes, and download the videos.'
+    ),
     long_description='',
-    author='Asday',
+    author='Adam Barnes',
     author_email='sara.and.zuka@gmail.com',
     url='',
     packages=find_packages('src'),
@@ -25,14 +27,15 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: Implementation :: CPython',
+        'Framework :: Django',
+        'Framework :: Django :: 2.1',
     ],
     install_requires=[
+        'django==2.1.3',
+        'pytz==2018.7',
     ],
 )

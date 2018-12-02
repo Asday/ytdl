@@ -14,5 +14,8 @@ class Video(models.Model):
     added = models.DateTimeField()
     removed = models.DateTimeField(null=True)
 
+    deleted = models.BooleanField(default=False)
+    privated = models.BooleanField(default=False)
+
     downloaded = models.DateTimeField(null=True)
     do_not_download = models.BooleanField(default=False)

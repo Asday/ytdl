@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 from django.core.checks import Critical, register
@@ -11,12 +12,10 @@ def check_youtube_dl_is_installed(app_configs, **kwargs):
         id='downloader.E_YOUTUBE_DL_NOT_INSTALLED',
     )
 
-    try:
-        return_code = subprocess.check_call(['youtube-dl', '--version'])
-    except subprocess.SubprocessError:
-        return [error]
-
-    if return_code != 0:
-        return [error]
+    with open(os.devnull, 'w') as devnull:
+        try:
+            subprocess.check_call(['youtube-dl', '--version'], stdout=devnull)
+        except subprocess.SubprocessError:
+            return [error]
 
     return []

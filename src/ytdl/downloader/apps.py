@@ -13,7 +13,8 @@ class DownloaderAppConfig(AppConfig):
     def ready(self):
         from . import checks  # noqa
 
-    def get_playlist_info(self, youtube_id):
+    @staticmethod
+    def get_playlist_info(youtube_id):
         try:
             results = subprocess.check_output([
                 'youtube-dl',

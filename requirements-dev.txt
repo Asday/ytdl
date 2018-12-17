@@ -1,4 +1,3 @@
-attrs
 detox
 flake8
 freezegun

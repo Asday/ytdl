@@ -1,4 +1,6 @@
 import datetime
+import os
+import subprocess
 
 from django.apps import apps
 from django.core.management import call_command
@@ -8,7 +10,11 @@ from freezegun import freeze_time
 import pytest
 import pytz
 
-from downloader.exceptions import YoutubeDLError
+from downloader.exceptions import (
+    NoFilesCreatedError,
+    TooManyFilesCreatedError,
+    YoutubeDLError,
+)
 from playlists.models import Playlist, Video
 
 
@@ -28,6 +34,7 @@ def test_get_playlist_info_raises_for_garbage_playlist():
 
 
 _TEST_PLAYLIST_ID = 'PL59FEE129ADFF2B12'
+_TEST_VIDEO_ID = '007VM8NZxkI'
 
 
 def test_get_playlist_info_returns_iterable():
@@ -46,6 +53,45 @@ def test_get_playlist_info_returns_id_and_title_for_all_results():
     for result in results:
         assert 'id' in result
         assert 'title' in result
+
+
+def test_download_video_raises_for_garbage_video(tmp_path):
+    downloader = apps.get_app_config('downloader')
+
+    with pytest.raises(YoutubeDLError):
+        downloader.download_video('asdf', tmp_path)
+
+
+def test_download_video_creates_a_file(tmp_path):
+    downloader = apps.get_app_config('downloader')
+
+    filename = downloader.download_video(_TEST_VIDEO_ID, tmp_path)
+
+    expected_path = os.path.join(tmp_path, filename)
+    assert os.path.exists(expected_path)
+
+    os.remove(expected_path)
+
+
+def test_download_video_raises_when_youtube_dl_misbehaves(tmp_path, mocker):
+    downloader = apps.get_app_config('downloader')
+
+    def run_factory(files_to_create):
+        def run(*args, cwd, **kwargs):
+            for i in range(files_to_create):
+                open(os.path.join(cwd, str(i)), 'w').close()
+
+        return run
+
+    mocker.patch.object(subprocess, 'run', run_factory(0))
+
+    with pytest.raises(NoFilesCreatedError):
+        downloader.download_video(_TEST_VIDEO_ID, tmp_path)
+
+    mocker.patch.object(subprocess, 'run', run_factory(2))
+
+    with pytest.raises(TooManyFilesCreatedError):
+        downloader.download_video(_TEST_VIDEO_ID, tmp_path)
 
 
 @attr.s
